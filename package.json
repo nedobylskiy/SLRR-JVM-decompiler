@@ -1,0 +1,19 @@
+{
+  "name": "slrr-jvm-decompiler",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Decompiler for Street Legal Racing: Redline TUFA class files",
+  "engines": { "node": ">=20" },
+  "files": ["dist", "README.md", "LICENSE"],
+  "bin": { "slrr-decompile": "./dist/src/cli.js" },
+  "exports": { ".": "./dist/src/index.js" },
+  "types": "./dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "report": "npm run build && node dist/src/report.js"
+  },
+  "devDependencies": { "@types/node": "^24.0.0", "typescript": "^5.9.0" },
+  "license": "MIT"
+}
