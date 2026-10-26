@@ -190,3 +190,15 @@ export function parseTufa(input: Uint8Array): TufaClass[] {
   }
   return result;
 }
+
+/** Some mod classes contain an empty own-name constant. Use a known filename as a fallback. */
+export function recoverMissingClassName(cls: TufaClass, filenameStem: string): boolean {
+  if (cls.name) return false;
+  if (!/^[A-Za-z_$][\w$]*$/.test(filenameStem)) throw new Error(`Cannot infer a class name from ${filenameStem}`);
+  const ownClass = cls.constants[cls.nameIndex];
+  if (ownClass?.kind !== 'class') throw new Error('Invalid own-class constant');
+  const name = cls.constants[ownClass.name];
+  if (name?.kind !== 'utf8') throw new Error('Invalid own-class name constant');
+  name.text = filenameStem;
+  return true;
+}

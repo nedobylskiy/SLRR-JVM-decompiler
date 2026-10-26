@@ -56,6 +56,8 @@ See [examples](examples/README.md) for a TUFA `.class` file beside its decompile
 - Comments, formatting and original `for` spelling are not recoverable from the class file. A `for` loop can appear as an equivalent `while` with its update in the body.
 - Fully qualified types are shortened with wildcard imports when their simple names are unambiguous.
 - Rare malformed stock descriptors such as `L;` are rendered as `Object`.
+- If a mod `.class` contains an empty class name, the CLI uses the file stem as a simple class name and warns. Its original package cannot be inferred from the class bytes.
+- Some mod classes encode unresolved resources as `system.rpk:0`. The original symbolic pack path and ID cannot be recovered from those bytes.
 - Decompilation is not yet a recompilation round trip. Source equivalence, method behavior and output against other game builds still need broader validation.
 
 The TUFA layout, opcode widths and control-flow patterns were cross-checked against the reverse-engineering work in [TrentonCh/slrr-reverse](https://github.com/TrentonCh/slrr-reverse/tree/dev/tools/slrrc), itself a fork of [EliasFD3S/slrr-reverse](https://github.com/EliasFD3S/slrr-reverse). That research is MIT-licensed; its authors retain credit for those findings. This package implements its own TypeScript parser and decompiler.

@@ -3,7 +3,7 @@ import { readFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, join, relative } from 'node:path';
 import { decompileClass } from './decompile.js';
 import { formatIr, lowerTree } from './ir.js';
-import { parseTufa } from './tufa.js';
+import { parseTufa, recoverMissingClassName } from './tufa.js';
 
 function usage(): never {
   console.error('Usage: slrr-decompile [--out DIR] [--ir] [--strict] FILE.class|GAME_DIRECTORY [...]');
@@ -42,6 +42,9 @@ async function main(): Promise<void> {
     try {
       const classes = parseTufa(await readFile(input));
       for (const cls of classes) {
+        if (recoverMissingClassName(cls, basename(input, '.class'))) {
+          console.error(`${input}: TUFA has no class name; using filename ${cls.name} (package cannot be recovered)`);
+        }
         const result = decompileClass(cls);
         const intermediate = cls.trees.map((_, i) => formatIr(lowerTree(cls, i))).join('\n\n');
         for (const diagnostic of result.diagnostics) console.error(`${input}: ${diagnostic}`);

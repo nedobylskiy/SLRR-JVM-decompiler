@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { decompileClass, decodeMethod } from '../src/decompile.js';
 import { formatIr, lowerTree } from '../src/ir.js';
-import { NONE, OP_FLAGS, parseTufa } from '../src/tufa.js';
+import { NONE, OP_FLAGS, parseTufa, recoverMissingClassName } from '../src/tufa.js';
 
 const u16 = (n: number): number[] => [n & 255, (n >>> 8) & 255];
 const u32 = (n: number): number[] => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
@@ -51,6 +51,17 @@ test('bad jump targets are rejected during lowering', () => {
   cls.trees[1][2].op = 20;
   cls.trees[1][2].immediate = 0x7fffffff;
   assert.throws(() => lowerTree(cls, 1), /leaves tree/);
+});
+
+test('missing mod class names can be recovered from the class filename', () => {
+  const cls = parseTufa(sample())[0];
+  const ownName = cls.constants[0];
+  assert.equal(ownName.kind, 'utf8');
+  ownName.text = '';
+  assert.equal(recoverMissingClassName(cls, 'Sample'), true);
+  assert.equal(cls.name, 'Sample');
+  assert.match(decompileClass(cls).source, /public class Sample/);
+  assert.equal(recoverMissingClassName(cls, 'Other'), false);
 });
 
 test('constructor descriptors omit return types in TUFA', () => {
