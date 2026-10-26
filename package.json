@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Decompiler for Street Legal Racing: Redline TUFA class files",
   "engines": { "node": ">=20" },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": ["dist", "examples", "README.md", "LICENSE"],
   "bin": { "slrr-decompile": "./dist/src/cli.js" },
   "exports": { ".": "./dist/src/index.js" },
   "types": "./dist/src/index.d.ts",
