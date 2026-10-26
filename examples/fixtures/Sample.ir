@@ -1,0 +1,38 @@
+example.Sample.tree0 / TREE 0
+  B0: L0..L3 -> exit
+L0:
+     0  src:  10  expr literal 28
+     1  src:  10  int 7
+     2  src:  10  end
+
+example.Sample.tree1 / TREE 1
+  B0: L0..L5 -> exit
+  B1: L5..L6 -> exit
+L0:
+     0  src:  10  expr literal 28
+     1  src:  10  int 1
+     2  src:  10  value
+     3  src:  10  release 0
+     4  src:  10  ret_value
+L5:
+     5  src:  10  release 0
+
+example.Sample.tree2 / TREE 2
+  B0: L0..L2 -> B2, B1
+  B1: L2..L7 -> exit
+  B2: L7..L12 -> exit
+L0:
+     0  src:  10  local 1
+     1  src:  10  jump_false 6 -> L7
+L2:
+     2  src:  10  expr literal 28
+     3  src:  10  int 2
+     4  src:  10  value
+     5  src:  10  release 0
+     6  src:  10  ret_value
+L7:
+     7  src:  10  expr literal 28
+     8  src:  10  int 3
+     9  src:  10  value
+    10  src:  10  release 0
+    11  src:  10  ret_value
