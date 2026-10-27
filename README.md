@@ -49,6 +49,7 @@ See [examples](examples/README.md) for a TUFA `.class` file beside its decompile
 - `npm test` runs synthetic TUFA tests for chunk boundaries, malformed jumps, method descriptors, control-flow blocks, `if`, `switch` and `do…while`.
 - `node dist/src/report.js GAME_DIRECTORY` reports parser failures and methods requiring raw IR fallback.
 - On the Steam Build 940 installation used during development: **2,921 files, 2,993 class blobs, 6,237 method bodies** were processed with zero parser failures and zero raw-IR fallbacks. The generated 2,993 source files also had **zero syntax errors** under the independent SLRR source parser in [TrentonCh/slrr-reverse](https://github.com/TrentonCh/slrr-reverse/tree/dev/tools/slrrc). These checks establish format and syntax coverage; they do not prove behavior or byte-identical recompilation.
+- The [system scripts source/class audit](docs/system-source-audit.md) compares a separate set of original sources and TUFA classes, including `Vector`.
 
 ## Fidelity and limits
 

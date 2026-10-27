@@ -214,8 +214,9 @@ class BodyWriter {
           return pc + 1;
         }
         if ([23, 24, 25, 26].includes(tag)) {
-          const value = this.pop(pc), expression = `${value}${tag === 23 || tag === 24 ? '++' : '--'}`;
-          if (statement) this.emit(depth, `${expression};`); else this.push(tag >= 25 ? `${tag === 25 ? '++' : '--'}${value}` : expression);
+          const value = this.pop(pc), operator = tag === 23 || tag === 25 ? '++' : '--';
+          const expression = tag >= 25 ? `${operator}${value}` : `${value}${operator}`;
+          if (statement) this.emit(depth, `${expression};`); else this.push(expression);
           return pc + 1;
         }
         if ([20, 21, 22].includes(tag)) {

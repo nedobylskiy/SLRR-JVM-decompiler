@@ -116,3 +116,21 @@ test('backward conditional becomes do-while', () => {
   assert.match(result.source, /do \{/);
   assert.match(result.source, /\} while \(0\);/);
 });
+
+test('all increment and decrement tags preserve direction and prefix position', () => {
+  const cls = parseTufa(sample())[0];
+  const descriptor = cls.constants.push({ kind: 'utf8', text: '(I)I' }) - 1;
+  const ops: [number, number?][] = [
+    [1, 1], [8, 24], [1, 1], [8, 26],
+    [1, 1], [8, 23], [1, 1], [8, 25],
+    [1, 1], [40], [3, 1], [3, 0], [43],
+  ];
+  const treeIndex = cls.trees.push(ops.map(([op, immediate], index) => ({ index, offset: index * 7, op, line: 10, ...(immediate === undefined ? {} : { immediate }) }))) - 1;
+  cls.instanceMethods.push({ flags: 1, name: 8, descriptor, tree: treeIndex, locals: 2 });
+  const result = decompileClass(cls);
+  assert.deepEqual(result.diagnostics, []);
+  assert.match(result.source, /arg0--;/);
+  assert.match(result.source, /--arg0;/);
+  assert.match(result.source, /arg0\+\+;/);
+  assert.match(result.source, /\+\+arg0;/);
+});
