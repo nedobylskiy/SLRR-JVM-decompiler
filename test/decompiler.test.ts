@@ -117,6 +117,24 @@ test('backward conditional becomes do-while', () => {
   assert.match(result.source, /\} while \(0\);/);
 });
 
+test('a return branch does not release a reused local in the following code', () => {
+  const cls = parseTufa(sample())[0];
+  const ops: [number, number?][] = [
+    [2, 1], [6, 5], [44], [7, 28], [11, 2], [45], [3, 1],
+    [2, 1], [6, 5], [44], [7, 28], [11, 3], [45],
+    [7, 28], [11, 1], [21, 6],
+    [1, 1], [40], [3, 1], [3, 0], [43],
+    [1, 1], [8, 24], [1, 1], [40], [3, 1], [3, 0], [43],
+  ];
+  const treeIndex = cls.trees.push(ops.map(([op, immediate], index) => ({
+    index, offset: index * 7, op, line: 10, ...(immediate === undefined ? {} : { immediate }),
+  }))) - 1;
+  cls.instanceMethods[1].tree = treeIndex;
+  const result = decompileClass(cls);
+  assert.deepEqual(result.diagnostics, []);
+  assert.match(result.source, /local1_2--;/);
+});
+
 test('all increment and decrement tags preserve direction and prefix position', () => {
   const cls = parseTufa(sample())[0];
   const descriptor = cls.constants.push({ kind: 'utf8', text: '(I)I' }) - 1;
