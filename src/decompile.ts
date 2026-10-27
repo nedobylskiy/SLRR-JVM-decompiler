@@ -349,6 +349,15 @@ class BodyWriter {
     return exit;
   }
 
+  private scopedRegion(start: number, end: number, depth: number, loop?: { header: number; exit: number }, switchExit?: number): void {
+    const locals = new Map(this.locals);
+    try { this.region(start, end, depth, loop, switchExit); }
+    finally {
+      this.locals.clear();
+      for (const [slot, name] of locals) this.locals.set(slot, name);
+    }
+  }
+
   private region(start: number, end: number, depth: number, loop?: { header: number; exit: number }, switchExit?: number, insideDo = false): void {
     let pc = start;
     while (pc < end) {
@@ -381,14 +390,14 @@ class BodyWriter {
           }
           if (tail?.op === 20 && tail.target !== undefined && tail.target > target && tail.target <= end) {
             this.emit(depth, `if (${test}) {`);
-            this.region(pc + 1, target - 1, depth + 1, loop, switchExit);
+            this.scopedRegion(pc + 1, target - 1, depth + 1, loop, switchExit);
             this.emit(depth, '} else {');
-            this.region(target, tail.target, depth + 1, loop, switchExit);
+            this.scopedRegion(target, tail.target, depth + 1, loop, switchExit);
             this.emit(depth, '}');
             pc = tail.target; continue;
           }
           this.emit(depth, `if (${test}) {`);
-          this.region(pc + 1, target, depth + 1, loop, switchExit);
+          this.scopedRegion(pc + 1, target, depth + 1, loop, switchExit);
           this.emit(depth, '}');
           pc = target; continue;
         }
